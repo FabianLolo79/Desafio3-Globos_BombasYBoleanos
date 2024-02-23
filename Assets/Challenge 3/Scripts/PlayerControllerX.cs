@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerControllerX : MonoBehaviour
 {
     public bool gameOver;
+    public bool isTooHigh; //limite de altura
 
     public float floatForce;
     private float gravityModifier = 1.5f;
@@ -29,6 +30,15 @@ public class PlayerControllerX : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.y >= 15)  //limite de altura
+        {
+            isTooHigh = true;
+            playerRb.velocity = Vector3.zero;
+        } else
+        {
+            isTooHigh = false;
+        }
+
         // While space is pressed and player is low enough, float up
         if (Input.GetKeyDown(KeyCode.Space) && !gameOver)
         {
@@ -39,7 +49,7 @@ public class PlayerControllerX : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         // if player collides with bomb, explode and set gameOver to true
-        if (other.gameObject.CompareTag("Bomb"))
+        if (other.gameObject.CompareTag("Bomb") || other.gameObject.CompareTag("Ground"))
         {
             explosionParticle.Play();
             playerAudio.PlayOneShot(explodeSound, 1.0f);
@@ -54,7 +64,6 @@ public class PlayerControllerX : MonoBehaviour
             fireworksParticle.Play();
             playerAudio.PlayOneShot(moneySound, 1.0f);
             Destroy(other.gameObject);
-
         }
 
     }
